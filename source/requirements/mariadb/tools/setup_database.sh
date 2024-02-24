@@ -1,34 +1,13 @@
 #!/bin/sh
 
-set -e;
 DATABASE_NAME=${DATABASE_NAME:-"wordpress"};
 DATABASE_USR=${DATABASE_USR:-"db_user"};
+MYSQL_ROOT_PWD=${MYSQL_ROOT_PWD:-"root4root"};
+DATABASE_USR_PWD=${DATABASE_USR_PWD:-"user4user"};
 
-mkdir -p /run/mysqld;
-chown -R mysql:mysql /run/mysqld;
-
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    
-    echo -n " # INIT MARIADB-SERVER ....";
-    mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql \
-                     --group=mysql --skip-test-db --rpm > /dev/null;
-    echo -e "\033[1;32m ok \033[0m";
-    
-fi
-
-chown -R mysql:mysql /var/lib/mysql;
+set -e &&\
 
 if [ ! -d "/var/lib/mysql/$DATABASE_NAME" ]; then
-
-    if [ "$MYSQL_ROOT_PWD" = "" ]; then
-        MYSQL_ROOT_PWD=`pwgen 16 1`;
-        echo -e "\033[1;33m[i] root Password: $MYSQL_ROOT_PWD\033[0m";
-    fi
-
-    if [ "$DATABASE_USR_PWD" = "" ]; then
-        DATABASE_USR_PWD=`pwgen 16 1`;
-        echo -e "\033[1;33m[i] user \"$DATABASE_USR\" Password: $DATABASE_USR_PWD\033[0m";
-    fi
 
     echo -n " # CREATE USER & DATABASE ...";   
     /usr/bin/mysqld --user=mysql --bootstrap << EOF &> /dev/null;
@@ -47,4 +26,7 @@ if [ ! -d "/var/lib/mysql/$DATABASE_NAME" ]; then
         FLUSH PRIVILEGES;
 EOF
         echo -e "\033[1;32m ok \033[0m";
-fi
+fi &&\
+
+unset DATABASE_NAME DATABASE_USR MYSQL_ROOT_PWD DATABASE_USR_PWD;
+exec $@;

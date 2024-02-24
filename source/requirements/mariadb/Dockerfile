@@ -11,27 +11,27 @@
 #                                                                              #
 # **************************************************************************** #
 
+# # Base image alpine:3.19 :
 FROM        alpine:3.19
 
-# Install necessary packages :
-RUN         apk update;\
-            apk add --no-cache mariadb mariadb-client pwgen;\
+# # Install Necessary Packages : mariadb-server, mariadb-client
+RUN         set -xe &&\
+            apk update  &&\
+            apk add --no-cache mariadb mariadb-client &&\
             rm -rf /var/cache/apk/*;
 
-# Copy necessary configuration files :
-COPY        config/* /config/
+# # Copy Configuration & Tools Files :
+COPY        config/ tools/      /entrypoint/
 
-# Run database initialization script :
-RUN         ./config/create_database.sh;\
-            mv -f /config/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf;\
-            chown -R mysql:mysql /etc/my.cnf.d;\
-            rm -rf /config /tmp/*;
+# # Init Mariadb && Set Config :
+RUN         /entrypoint/init_server.sh
 
-# Expose ports :
+# # Expose Ports :
 EXPOSE      3306
 
-# Set user to mysql :
+# # Set User To Mysql :
 USER        mysql
 
-# Set entrypoint to start MySQL server :
-ENTRYPOINT [ "/usr/bin/mysqld", "--console" ]
+# # Set Entrypoint To Start Mariadb Server :
+ENTRYPOINT [ "/entrypoint/setup_database.sh" ]
+CMD        [ "/usr/bin/mysqld", "--console" ]
