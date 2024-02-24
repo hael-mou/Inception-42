@@ -9,28 +9,33 @@
 #      | By: hael-mou <hamzaelmoudden2@gmail.com>                              #
 #      | Created: 2024/02/21                                                   #
 #                                                                              #
-# **************************************************************************** #                     
+# **************************************************************************** #
 
+# # Base image alpine:3.19 :
 FROM        alpine:3.19
 
+# Install necessary packages : nginx - libcap
+RUN 	    apk update;\
+            apk add --no-cache nginx libcap;\
+            rm -f /var/cache/apk/*;
 
-RUN 	    apk update && \
-    	    apk add --no-cache nginx openssl libcap &&\
-		    rm -f /var/cache/apk/*
+# # Copy necessary configuration files :
+COPY        ./    /tmp/
 
-RUN         setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx &&\
-            mkdir /etc/nginx/ssl &&\
-            chown -R nginx:nginx /etc/nginx
+# # setup nginx config, ssl keys, and bind permissions :
+RUN         set -xe &&\
+            setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx &&\
+            mv -f /tmp/tools /etc/nginx/ssl &&\
+            mv -f /tmp/config/nginx.conf /etc/nginx/nginx.conf &&\
+            chown -R nginx:nginx /etc/nginx &&\
+            rm -rf /tmp/*;
 
-COPY        ./config/nginx.conf   /etc/nginx/nginx.conf
-
-USER        nginx
-
-RUN         openssl req -x509 -nodes -newkey rsa:2048\
-                -keyout /etc/nginx/ssl/inception.key -out /etc/nginx/ssl/inception.crt\
-		        -subj "/C=MR/ST=Tangier_Tetouan_Al Hoceima/L=Tetouan/O=42/OU=1337\
-	        	/CN=hael-mou.42.fr"
-
+# # Expose service ports :
 EXPOSE      443/tcp
 
-CMD	        ["nginx", "-g", "daemon off;"]
+# # Set user to nginx :
+USER        nginx
+
+# # Set entrypoint to start nginx server :
+ENTRYPOINT  [ "nginx" ]
+CMD         ["-g", "daemon off;"]
