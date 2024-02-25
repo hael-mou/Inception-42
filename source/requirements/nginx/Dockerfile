@@ -20,15 +20,15 @@ RUN 	    apk update;\
             rm -f /var/cache/apk/*;
 
 # # Copy necessary configuration files :
-COPY        ./    /tmp/
+COPY        ./    /entrypoint/
 
 # # setup nginx config, ssl keys, and bind permissions :
 RUN         set -xe &&\
             setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx &&\
-            mv -f /tmp/tools /etc/nginx/ssl &&\
-            mv -f /tmp/config/nginx.conf /etc/nginx/nginx.conf &&\
+            mv -f /entrypoint/tools /etc/nginx/ssl &&\
+            mv -f /entrypoint/config/nginx.conf /etc/nginx/nginx.conf &&\
             chown -R nginx:nginx /etc/nginx &&\
-            rm -rf /tmp/*;
+            rm -rf /entrypoint/*;
 
 # # Expose service ports :
 EXPOSE      443/tcp
