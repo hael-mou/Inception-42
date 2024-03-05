@@ -24,8 +24,10 @@ if [  -f "/var/www/html/wordpress/wp-config-sample.php" ]; then
         echo -e "\033[1;32m-> Install Content ...\033[0m";
         wp core install --url=$WP_URL --title=$WP_TITLE --admin_user=$WP_ADMIN\
                 --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL;
+        wp user create $WP_USER $WP_USER_EMAIL --role=$WP_USER_ROLE --user_pass=$WP_USER_PWD;
         rm -rf /var/www/html/wordpress/wp-config-sample.php
 fi;
+
 
 mkdir   -p /entrypoint/done.wp
 

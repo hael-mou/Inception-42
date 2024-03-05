@@ -12,7 +12,7 @@ services:
         depends_on :
             wordpress :
                 condition : service_healthy
-        restart: on-failure
+        restart: always
 
     mariadb :
         container_name  : mariadb
@@ -43,6 +43,10 @@ services:
           WP_ADMIN  : ${WP_ADMIN}
           WP_ADMIN_PWD  : ${WP_ADMIN_PWD}
           WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+          WP_USER   :  ${WP_USER}
+          WP_USER_PWD  :  ${WP_USER_PWD}
+          WP_USER_EMAIL:  ${WP_USER_EMAIL}
+          WP_USER_ROLE:  ${WP_USER_ROLE}
         volumes :
           - WordPress:/var/www/html
         depends_on :
@@ -59,7 +63,15 @@ volumes:
     DataBase :
         name    : DataBase
         driver  : local
+        driver_opts :
+            type : none
+            o : bind
+            device: /home/hael-mou/data/DataBase
 
     WordPress :
         name    : WordPress
         driver  : local
+        driver_opts:
+            type : none
+            o : bind
+            device: /home/hael-mou/data/WordPress
