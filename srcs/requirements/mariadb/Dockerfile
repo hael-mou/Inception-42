@@ -11,27 +11,27 @@
 #                                                                              #
 # **************************************************************************** #
 
-# # Base image alpine:3.19 :
 FROM        alpine:3.19
 
-# # Install Necessary Packages : mariadb-server, mariadb-client
-RUN         set -xe &&\
-            apk update  &&\
-            apk add --no-cache mariadb mariadb-client &&\
-            rm -rf /var/cache/apk/*;
+RUN         set -xe \
+            &&  apk update && apk add --no-cache mariadb mariadb-client\
+            &&  rm -rf /var/cache/apk/*;
 
-# # Copy Configuration & Tools Files :
-COPY        config/ tools/      /entrypoint/
+COPY        config/ tools/      script/
 
-# # Init Mariadb && Set Config :
-RUN         /entrypoint/init_server.sh
+RUN         set -xe \
+            &&  mv -f script/mariadb-server.cnf etc/my.cnf.d/mariadb-server.cnf\
+            &&  mkdir -p /run/mysqld /var/log/mysql/ /var/lib/mysql/\
+            &&  chown -R mysql:mysql /run/mysqld /var/log/ /etc/my.cnf\
+            &&  chown -R mysql:mysql /etc/my.cnf.d /var/lib/mysql/ /script\
+            &&  chmod -R +x /script;
 
-# # Expose Ports :
 EXPOSE      3306
 
-# # Set User To Mysql :
 USER        mysql
 
-# # Set Entrypoint To Start Mariadb Server :
-ENTRYPOINT [ "/entrypoint/setup_database.sh" ]
-CMD        [ "/usr/bin/mysqld", "--console" ]
+ENTRYPOINT  [ "/script/create_db.sh" ]
+CMD         [ "/usr/bin/mysqld", "--console" ]
+
+HEALTHCHECK --interval=2s --timeout=40s --start-period=2s --retries=3\
+        CMD /script/healthcheck.sh

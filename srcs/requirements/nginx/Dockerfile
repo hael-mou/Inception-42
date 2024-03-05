@@ -11,31 +11,28 @@
 #                                                                              #
 # **************************************************************************** #
 
-# # Base image alpine:3.19 :
 FROM        alpine:3.19
 
-# Install necessary packages : nginx - libcap
-RUN 	    apk update;\
-            apk add --no-cache nginx libcap;\
-            rm -f /var/cache/apk/*;
+RUN 	    set -xe \
+            &&  apk update && apk add --no-cache nginx libcap\
+            &&  rm -rf /var/cache/apk/*;
 
-# # Copy necessary configuration files :
-COPY        ./    /entrypoint/
+COPY        ./      /tmp/
 
-# # setup nginx config, ssl keys, and bind permissions :
-RUN         set -xe &&\
-            setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx &&\
-            mv -f /entrypoint/tools /etc/nginx/ssl &&\
-            mv -f /entrypoint/config/nginx.conf /etc/nginx/nginx.conf &&\
-            chown -R nginx:nginx /etc/nginx &&\
-            rm -rf /entrypoint/*;
+RUN         set -xe \
+            &&  setcap  'cap_net_bind_service=+ep' /usr/sbin/nginx\
+            &&  mv -f /tmp/config/nginx.conf /etc/nginx/nginx.conf\
+            &&  mv -f /tmp/tools /etc/nginx/ssl\
+            &&  chown -R nginx:nginx /etc/nginx /var/run/nginx/\
+            &&  chown -R nginx:nginx /var/lib/nginx /var/log\
+            &&  rm -rf /var/www/*\
+            &&  mkdir -p /var/www/html\
+            &&  chown -R nobody:nobody /var/www/html && adduser nginx nobody\
+            &&  rm -rf /tmp/*;
 
-# # Expose service ports :
-EXPOSE      443/tcp
+EXPOSE      443
 
-# # Set user to nginx :
 USER        nginx
 
-# # Set entrypoint to start nginx server :
 ENTRYPOINT  [ "nginx" ]
 CMD         ["-g", "daemon off;"]

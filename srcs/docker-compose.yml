@@ -1,0 +1,65 @@
+version : '3.8'
+
+services:
+    nginx : 
+        container_name  : nginx
+        image   : nginx:1337
+        build   : requirements/nginx
+        volumes :
+            - WordPress:/var/www/html
+        ports:
+            - 443:443
+        depends_on :
+            wordpress :
+                condition : service_healthy
+        restart: on-failure
+
+    mariadb :
+        container_name  : mariadb
+        image   : mariadb:1337
+        build   : requirements/mariadb
+        environment :
+            DB_PORT : ${DB_PORT}
+            DB_NAME : ${DB_NAME}
+            DB_USER : ${DB_USER}
+            DB_ROOT_PWD : ${DB_ROOT_PWD}
+            DB_USER_PWD : ${DB_USER_PWD}
+        volumes :
+            - DataBase:/var/lib/mysql
+        restart: always
+    
+    wordpress :
+        container_name  : wordpress
+        image   : wordpress:1337
+        build   : requirements/wordpress
+        environment :
+          DB_NAME   : ${DB_NAME}
+          DB_HOST   : ${DB_HOST}
+          DB_PORT   : ${DB_PORT}
+          DB_USER   : ${DB_USER}
+          DB_USER_PWD   : ${DB_USER_PWD}
+          WP_URL    : ${WP_URL}
+          WP_TITLE  : ${WP_TITLE}
+          WP_ADMIN  : ${WP_ADMIN}
+          WP_ADMIN_PWD  : ${WP_ADMIN_PWD}
+          WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+        volumes :
+          - WordPress:/var/www/html
+        depends_on :
+            mariadb :
+                condition : service_healthy
+        restart: always
+
+networks:
+    default :
+        name    : inception
+        driver  : bridge
+
+volumes:
+    DataBase :
+        name    : DataBase
+        driver  : local
+
+    WordPress :
+        name    : WordPress
+        driver  : local
