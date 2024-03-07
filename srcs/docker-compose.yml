@@ -12,6 +12,8 @@ services:
         depends_on :
             wordpress :
                 condition : service_healthy
+            adminer :
+                condition : service_healthy
         restart: always
 
     mariadb :
@@ -54,6 +56,17 @@ services:
                 condition : service_healthy
         restart: always
 
+    adminer :
+        container_name  : adminer
+        image   : adminer:1337
+        build   : requirements/adminer
+        volumes :
+          - WordPress:/var/www/html
+        depends_on :
+            mariadb :
+                condition : service_healthy
+        restart: always
+
 networks:
     default :
         name    : inception
@@ -63,15 +76,15 @@ volumes:
     DataBase :
         name    : DataBase
         driver  : local
-        driver_opts :
-            type : none
-            o : bind
-            device: /home/hael-mou/data/DataBase
+        # driver_opts :
+        #     type : none
+        #     o : bind
+        #     device: /home/hael-mou/data/DataBase
 
     WordPress :
         name    : WordPress
         driver  : local
-        driver_opts:
-            type : none
-            o : bind
-            device: /home/hael-mou/data/WordPress
+        # driver_opts:
+        #     type : none
+        #     o : bind
+        #     device: /home/hael-mou/data/WordPress
