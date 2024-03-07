@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm   -rf /script/done.wp
+rm   -rf /script/done.db
 
 set -e &&\
 # # INSTALL MARIADB DB ... :
@@ -33,7 +33,7 @@ if [ ! -d "/var/lib/mysql/$DB_NAME" ]; then
 EOF
 fi;
 
-mkdir   -p /script/done.wp
+mkdir   -p /script/done.db
 
 echo    -e "\033[1;32m-> start mariadb sevice ...\033[0m";
 exec $@;

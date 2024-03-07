@@ -1,6 +1,6 @@
 #!/bin/sh
 
-while [ ! -d "/script/done.wp" ]; do
+while [ ! -d "/script/done.db" ]; do
     sleep 1
 done
 
