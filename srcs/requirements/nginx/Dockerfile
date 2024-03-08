@@ -36,3 +36,6 @@ USER        nginx
 
 ENTRYPOINT  [ "nginx" ]
 CMD         ["-g", "daemon off;"]
+
+HEALTHCHECK --interval=2s --timeout=40s --start-period=1s --retries=3\
+        CMD netstat -tuln | grep LISTEN | grep 0.0.0.0:443;

@@ -52,6 +52,8 @@ services:
         volumes :
           - WordPress:/var/www/html
         depends_on :
+            redis :
+                condition : service_healthy
             mariadb :
                 condition : service_healthy
         restart: always
@@ -59,12 +61,18 @@ services:
     adminer :
         container_name  : adminer
         image   : adminer:1337
-        build   : requirements/adminer
+        build   : requirements/bonus/adminer
         volumes :
           - WordPress:/var/www/html
         depends_on :
             mariadb :
                 condition : service_healthy
+        restart: always
+    
+    redis :
+        container_name  : redis
+        image   : redis:1337
+        build   : requirements/bonus/redis
         restart: always
 
 networks:
