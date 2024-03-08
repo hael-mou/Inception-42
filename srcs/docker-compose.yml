@@ -75,6 +75,19 @@ services:
         build   : requirements/bonus/redis
         restart: always
 
+    cadvisor :
+        container_name  : cadvisor
+        image   : cadvisor:1337
+        build   : requirements/bonus/cadvisor
+        ports:
+            - 8080:8080
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro 
+            - /sys:/sys:ro 
+            - /var/lib/docker/:/var/lib/docker:ro
+        restart: always
+
 networks:
     default :
         name    : inception

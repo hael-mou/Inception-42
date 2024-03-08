@@ -5,15 +5,18 @@ set -e
 # Remove previous setup files
 rm -rf /entrypoint/done.wp
 
-# Define variables
+# variables
 WP_PATH="/var/www/html/wordpress"
+WP_VERSION="6.4.3"
 
 # Download WordPress if not already present
 if [ ! -d "$WP_PATH" ]; then
     echo -e "\033[1;32m-> Downloading WordPress...\033[0m"
     mkdir -p "$WP_PATH" && cd "$WP_PATH"
-    wp core download --version=6.4.3 --force --insecure --extract
+    wp core download --version="$WP_VERSION" --force --insecure --extract
 fi
+
+cd "$WP_PATH";
 
 # Create wp-config.php if not already present
 if [ ! -f "$WP_PATH/wp-config.php" ]; then

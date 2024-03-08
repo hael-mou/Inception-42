@@ -5,30 +5,20 @@
 #       / _  / _ `/ -_) /   / /|_/ / _ \/ // /                                 #
 #      /_//_/\_,_/\__/_/   /_/  /_/\___/\_,_/                                  #
 #                                                                              #
-#      | Redis Dockerfile                                                      #
+#      | Adminer Dockerfile                                                    #
 #      | By: hael-mou <hamzaelmoudden2@gmail.com>                              #
 #      | Created: 2024/03/08                                                   #
 #                                                                              #
 # **************************************************************************** #
 
-FROM        alpine:3.19
+FROM    alpine:3.19
 
-RUN         set -xe && apk update\
-            &&  apk add --no-cache redis\
-            &&  rm -f /var/cache/apk/*;
+RUN     set -xe && apk update\
+        &&  apk add --no-cache libc6-compat\
+        &&  wget https://github.com/google/cadvisor/releases/download/v0.37.0/cadvisor\
+        &&  chmod +x cadvisor\
+        &&  rm -f /var/cache/apk/*;
+        
+EXPOSE  8080
 
-COPY        config/redis.conf /etc/redis.conf
-
-RUN         set -xe \
-	        &&  chown -R nobody:nobody /etc/redis.conf /var/run/ /var/log;
-
-EXPOSE      6379
-
-USER        nobody
-
-STOPSIGNAL  SIGKILL
-
-CMD         ["redis-server", "/etc/redis.conf"]
-
-HEALTHCHECK --interval=2s --timeout=40s --start-period=1s --retries=3\
-        CMD netstat -tuln | grep LISTEN | grep 0.0.0.0:6379;
+CMD     ["./cadvisor"]
