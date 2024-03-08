@@ -20,7 +20,8 @@ RUN         set -xe && apk update\
 COPY        config/redis.conf /etc/redis.conf
 
 RUN         set -xe \
-	        &&  chown -R nobody:nobody /etc/redis.conf /var/run/ /var/log;
+            &&  mkdir -p /data \
+	        &&  chown -R nobody:nobody /etc/redis.conf /var/run/ /data /var/log;
 
 EXPOSE      6379
 

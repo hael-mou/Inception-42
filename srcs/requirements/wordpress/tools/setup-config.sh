@@ -36,8 +36,8 @@ fi
 
 # Install a WordPress theme
 if ! $(wp theme is-installed astra); then
-    echo -e "\033[1;32m-> Installing WordPress Theme: generatepress...\033[0m"
-    wp theme install generatepress --activate
+    echo -e "\033[1;32m-> Installing WordPress Theme: twentytwentyfour...\033[0m"
+    wp theme install twentytwentyfour --activate
 fi
 
 # Install and configure Redis Object Cache plugin
@@ -46,6 +46,7 @@ if ! $(wp plugin is-active wp-redis); then
     wp plugin install redis-cache --activate
     wp config set WP_REDIS_HOST "redis"
     wp config set WP_REDIS_PORT "6379"
+    wp config set WP_REDIS_PREFIX "inc_"
     wp config set WP_REDIS_DATABASE "0"
 fi
 
