@@ -75,11 +75,27 @@ services:
         build   : requirements/bonus/redis
         restart: always
 
+    ftp:
+        container_name: ftp
+        image: ftp:1337
+        build:
+            args:
+                - FTP_USR=${FTP_USR}
+                - FTP_PWD=${FTP_PWD}
+            context: requirements/bonus/ftp-server
+        volumes :
+            - WordPress:/var/www/html
+        ports:
+            - "21:21"
+            - "21100-21110:21100-21110"
+        restart: always
+        network_mode: bridge 
+
     cadvisor :
         container_name  : cadvisor
         image   : cadvisor:1337
         build   : requirements/bonus/cadvisor
-        ports:
+        ports :
             - 8080:8080
         volumes:
             - /:/rootfs:ro
