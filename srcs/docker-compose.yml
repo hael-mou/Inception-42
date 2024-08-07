@@ -105,6 +105,14 @@ services:
             - /var/lib/docker/:/var/lib/docker:ro
         restart: always
 
+    calculator:
+        container_name  : calculator
+        image:  calculator:1337 
+        build:  requirements/bonus/calculator
+        ports :
+            - 8081:8081
+        restart: always
+
 networks:
     default :
         name    : inception
