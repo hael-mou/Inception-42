@@ -26,10 +26,12 @@ top:
 ps:
 	@docker-compose -f srcs/docker-compose.yml ps --all;
 
+logs:
+	@docker-compose -f srcs/docker-compose.yml logs
+
 images:
 	@docker images -a;
 
-# error here: ////////////
 clean:
 	@if [ -n "$(shell docker ps -q)" ]; then\
 		docker stop $(shell docker ps -q)\
@@ -49,4 +51,4 @@ clean:
 		sudo rm -rf /home/hael-mou/data;\
 	fi;
 
-.PHONY: up down top ps images clean
+.PHONY: up down top ps images clean logs
