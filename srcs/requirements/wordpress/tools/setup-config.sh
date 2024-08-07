@@ -26,12 +26,12 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 fi
 
 # Install WordPress if not already installed
-if [ -f "$WP_PATH/wp-config-sample.php" ]; then
+if [ ! -f "$WP_PATH/wp-config.init" ]; then
     echo -e "\033[1;32m-> Installing WordPress Content...\033[0m"
     wp core install --url="$WP_URL" --title="$WP_TITLE" --admin_user="$WP_ADMIN" \
         --admin_password="$WP_ADMIN_PWD" --admin_email="$WP_ADMIN_EMAIL"
     wp user create "$WP_USER" "$WP_USER_EMAIL" --role="$WP_USER_ROLE" --user_pass="$WP_USER_PWD"
-    rm -rf "$WP_PATH/wp-config-sample.php"
+    touch "$WP_PATH/wp-config.init"
 fi
 
 # Install a WordPress theme
@@ -50,6 +50,7 @@ if ! $(wp plugin is-active wp-redis); then
     wp config set WP_REDIS_DATABASE "0"
 fi
 
+chmod -R 775 ${WP_PATH} 2>/dev/null || echo "chmod error !!";
 
 wp redis enable;
 

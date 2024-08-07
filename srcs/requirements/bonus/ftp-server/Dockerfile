@@ -28,6 +28,7 @@ RUN         set -xe\
             &&  echo "$FTP_USR:$FTP_PWD" | /usr/sbin/chpasswd\
             &&  echo $FTP_USR | tee -a /etc/vsftpd.userlist\
             &&  chown -R nobody:nobody /var/www/html\
+            &&  chmod 775 /var/www/html \ 
             &&  adduser $FTP_USR nobody;
 
 WORKDIR     /var/www/html

@@ -12,6 +12,8 @@
 # **************************************************************************** #
 
 up:
+	@mkdir -p /home/hael-mou/data/DataBase
+	@mkdir -p /home/hael-mou/data/WordPress
 	@docker-compose -f srcs/docker-compose.yml up -d --build;
 	@docker system prune -f --volumes >/dev/null;
 
@@ -27,6 +29,7 @@ ps:
 images:
 	@docker images -a;
 
+# error here: ////////////
 clean:
 	@if [ -n "$(shell docker ps -q)" ]; then\
 		docker stop $(shell docker ps -q)\
@@ -41,6 +44,9 @@ clean:
 	fi;
 	@if [ -n "$(shell docker volume ls -q)" ]; then\
 		docker volume rm $(shell docker volume ls -q) > /dev/null;\
+	fi;
+	@if [ -d "/home/hael-mou/data" ]; then\
+		sudo rm -rf /home/hael-mou/data;\
 	fi;
 
 .PHONY: up down top ps images clean
