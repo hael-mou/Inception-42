@@ -25,6 +25,8 @@ COPY        config/  /var/www/Calculator/
 
 WORKDIR     /var/www/Calculator
 
+STOPSIGNAL  SIGKILL
+
 EXPOSE      8081
 
 CMD         [ "node", "server.js" ]
